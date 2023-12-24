@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:amazon_clone/common/widgets/bottom_bar.dart';
 import 'package:amazon_clone/constants/error_handling.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/constants/utils.dart';
+// import 'package:amazon_clone/features/home/screens/home_screen.dart';
 import 'package:amazon_clone/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -24,6 +26,7 @@ class AuthService {
         email: email,
         type: '',
         token: '',
+        address: '',
       );
       http.Response res = await http.post(
         Uri.parse('${GlobalVariables.uri}/api/signup'),
@@ -52,12 +55,13 @@ class AuthService {
     }
   }
 
-  void signInUser(
-      {required BuildContext context,
-      required String email,
-      required String password}) async {
+  void signInUser({
+    required BuildContext context,
+    required String email,
+    required String password,
+  }) async {
     http.Response res = await http.post(
-      Uri.parse('${GlobalVariables.uri}/api/signup'),
+      Uri.parse('${GlobalVariables.uri}/api/signin'),
       body: jsonEncode(
         {
           'email': email,
@@ -73,15 +77,49 @@ class AuthService {
       resp: res,
       context: context,
       onSuccess: () async {
-        showSnackBar(
-          context,
-          'Accoun created! Login with the same credentials',
-        );
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
         // ignore: use_build_context_synchronously
         Provider.of<UserProvider>(context, listen: false).setUser(res.body);
+        // Set listen to false everytime you are out of build function
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          BottomBar.routeName,
+          (route) => false,
+        );
       },
     );
+  }
+
+  void getUserData({
+    required BuildContext context,
+  }) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('x-auth-token');
+    if (token == null) {
+      prefs.setString('x-auth-token', '');
+    }
+    var tokenRes = await http.post(
+      Uri.parse(
+        '${GlobalVariables.uri}/tokenIsValid',
+      ),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token!,
+      },
+    );
+    var response = jsonDecode(tokenRes.body);
+    if (response) {
+      http.Response userRes = await http.get(
+        Uri.parse('${GlobalVariables.uri}/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
+        },
+      );
+      // ignore: use_build_context_synchronously
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      userProvider.setUser(userRes.body);
+    }
   }
 }

@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const PORT = 3000;
 
-const uri = `mongodb+srv://<username>:<password>@cluster0.<cluster_id>.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://REDACTED:REDACTED@cluster0.REDACTED.mongodb.net/?retryWrites=true&w=majority`;
 
 const app = express();
 
@@ -17,6 +17,6 @@ mongoose
 app.use(express.json());
 app.use(authRouter);
 
-app.listen(PORT, "192.168.29.110", () => {
+app.listen(PORT, "LOCAL PVT IP", () => {
   console.log(`Connected at port : ${PORT}`);
 });

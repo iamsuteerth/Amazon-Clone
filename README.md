@@ -6,9 +6,4 @@
 
 **For errors like `Navigator operation requested with a context that does not include a Navigator`, Use a Builder wrapped around the widget causing the push**
 
-## Project Log
-| Day        | Comments                                                           |
-|------------|--------------------------------------------------------------------|
-| 07-12-2023 | Basic folder structure setup and boilerplates. Created Auth screen |
-| 08-12-2023 | Setup basic signUp API.                                            |
-| 09-12-2023 | Setup signIn API and linked functions to AuthScreen.               |
+The auth middleware is to check if the user is validated or not, if he is, then the middleware attaches the id.

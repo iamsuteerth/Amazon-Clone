@@ -8,6 +8,7 @@ class User {
   final String password;
   final String type;
   final String token;
+  final String address;
 
   User({
     required this.id,
@@ -16,6 +17,7 @@ class User {
     required this.password,
     required this.type,
     required this.token,
+    required this.address,
   });
 
   Map<String, dynamic> toMap() {
@@ -26,17 +28,19 @@ class User {
       'password': password,
       'type': type,
       'token': token,
+      'address': address,
     };
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      id: map['id'] as String,
+      id: map['_id'] as String,
       name: map['name'] as String,
       email: map['email'] as String,
       password: map['password'] as String,
       type: map['type'] as String,
       token: map['token'] as String,
+      address: map['address'] as String,
     );
   }
 
